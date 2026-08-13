@@ -1,0 +1,37 @@
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.feature-card {
+  background: white;
+  padding: 28px 20px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  border: 1px solid #ffe8ee;
+}
+
+.feature-icon {
+  font-size: 2rem;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.feature-card h3 {
+  margin: 0 0 8px 0;
+  color: var(--pink-main);
+}
+
+.feature-card p {
+  color: var(--text-gray);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}

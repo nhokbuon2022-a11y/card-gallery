@@ -1,0 +1,114 @@
+:root {
+  --pink-main: #ff6b8b;
+  --pink-light: #fff0f3;
+  --pink-hover: #ff4770;
+  --text-dark: #2d3748;
+  --text-gray: #718096;
+  --shadow-soft: 0 10px 30px rgba(255, 107, 139, 0.15);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--pink-light);
+  color: var(--text-dark);
+  font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Products Section Layout */
+.products-section {
+  width: 100%;
+}
+
+.products-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.products-header p {
+  color: var(--text-gray);
+  margin-top: 8px;
+}
+
+.products-grid {
+  display: grid !important;
+  /* Chia 3 cột đều nhau trên màn hình lớn */
+  grid-template-columns: repeat(3, 1fr) !important; 
+  gap: 32px !important; /* Khoảng cách rõ ràng cả chiều ngang lẫn chiều dọc */
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px 0;
+}
+
+/* Responsive cho màn hình nhỏ hơn */
+@media (max-width: 900px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .products-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Responsive cho Điện Thoại (Màn hình dưới 768px) */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20px 16px; /* Giảm padding lề hai bên để tối ưu không gian hiển thị */
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+
+  .products-header {
+    margin-bottom: 24px;
+  }
+
+  .products-header p {
+    font-size: 0.85rem;
+  }
+
+  /* Hiển thị danh sách sản phẩm dạng 1 cột tràn viền đẹp mắt */
+  .products-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important; /* 1 cột duy nhất */
+    gap: 20px !important;                  /* Khoảng cách vừa phải giữa các thẻ */
+    padding: 10px 0 30px 0;
+  }
+}
+
+/* Tùy chọn: Nếu muốn hiển thị 2 cột trên các dòng điện thoại màn hình to (Plus, Ultra, Pro Max) */
+@media (max-width: 480px) {
+  .products-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

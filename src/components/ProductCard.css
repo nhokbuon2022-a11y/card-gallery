@@ -1,0 +1,131 @@
+.product-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  border: 1px solid #ffe8ee;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  /* BẮT BỘC: Bỏ margin-top và position relative thừa */
+  margin: 0 !important;
+  position: static !important;
+  width: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(255, 107, 139, 0.2);
+}   
+
+.card-image-box {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+
+.card-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .card-image-box img {
+  transform: scale(1.05);
+}
+
+.product-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 107, 139, 0.9);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.card-info {
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.card-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.15rem;
+  color: var(--text-dark);
+}
+
+.product-price {
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.product-price span {
+  color: var(--pink-main);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.btn-card {
+  display: block;
+  background: #ffe8ee;
+  color: var(--pink-main);
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-card:hover {
+  background: var(--pink-main);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .product-card {
+    border-radius: 16px;
+  }
+
+  /* Giảm chiều cao ảnh sản phẩm trên điện thoại để không chiếm hết màn hình */
+  .card-image-box {
+    height: 200px; 
+  }
+
+  .card-info {
+    padding: 14px;
+  }
+
+  .card-info h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .product-price {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+
+  .product-price span {
+    font-size: 1.05rem;
+  }
+
+  .btn-card {
+    padding: 10px;
+    font-size: 0.85rem;
+    border-radius: 20px;
+  }
+}

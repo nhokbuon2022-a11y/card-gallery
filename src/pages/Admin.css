@@ -1,0 +1,114 @@
+.admin-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.admin-form {
+  background: #fff5f7;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #ffe1e8;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.form-group input:focus {
+  border-color: #ff5277;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-save {
+  background: #ff5277;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: #888;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Table danh sách */
+.admin-list table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.admin-list th, .admin-list td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.admin-list th {
+  background: #fafafa;
+  color: #555;
+}
+
+.badge-tag {
+  background: #ffe8ee;
+  color: #ff5277;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.btn-edit {
+  background: #ffc107;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-right: 6px;
+  cursor: pointer;
+  color: #333;
+  font-weight: 600;
+}
+
+.btn-delete {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}

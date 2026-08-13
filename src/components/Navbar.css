@@ -1,0 +1,110 @@
+/* Styling tổng thể cho Navbar */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Phần Logo + Tên thương hiệu */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0; /* Không cho phép thu nhỏ gây mất chữ */
+}
+
+.nav-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.brand-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ff5277;
+  white-space: nowrap; /* BẮT BỘC: Không cho chữ xuống dòng */
+}
+
+/* Phần Menu Links */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #555555;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  white-space: nowrap; /* BẮT BỘC: Giữ "Trang Chủ" nằm trên 1 dòng */
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  background-color: #ffe8ee;
+  color: #ff5277;
+}
+
+/* Nút Zalo */
+.btn-zalo {
+  background-color: #ff6b8b;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap; /* Giữ nút không bị biến dạng */
+  flex-shrink: 0;
+}
+
+/* ========================================== */
+/* OPTIMIZE RIÊNG CHO DI ĐỘNG (Screen < 600px) */
+/* ========================================== */
+@media (max-width: 600px) {
+  .navbar {
+    padding: 10px 8px;
+    gap: 4px;
+  }
+
+  .nav-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .brand-title {
+    font-size: 0.9rem; /* Thu nhỏ chữ tên shop để vừa màn hình */
+  }
+
+  .nav-menu {
+    gap: 2px;
+  }
+
+  .nav-link {
+    font-size: 0.78rem;
+    padding: 5px 8px; /* Tối ưu padding để "Trang Chủ" gọn gàng */
+  }
+
+  .btn-zalo {
+    padding: 6px 10px ;
+    font-size: 0.75rem ;
+  }
+}

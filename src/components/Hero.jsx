@@ -18,7 +18,7 @@ function Hero({ onExplore }) {
         </div>
       </div>
       <div className="hero-image-wrapper">
-        <img src="/background.jpg" alt="Thiệp Mời Chibi" className="hero-img" />
+        <img src={`${import.meta.env.BASE_URL}background.jpg`} alt="Thiệp Mời Chibi" className="hero-img" />
       </div>
     </section>
   );

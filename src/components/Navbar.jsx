@@ -5,7 +5,7 @@ function Navbar({ activeTab, setActiveTab }) {
   return (
     <header className="navbar">
       <div className="nav-brand">
-        <img src="/card-gallery/logo.jpg" alt="Logo" className="nav-logo" />
+        <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="Logo" className="nav-logo" />
         <span className="brand-title">Thiệp Xinh Chibi</span>
       </div>
       <nav className="nav-menu">

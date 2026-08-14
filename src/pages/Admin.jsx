@@ -72,7 +72,7 @@ const uploadImage = async (file) => {
       // Nếu có chọn file ảnh mới từ máy, tiến hành upload lên Supabase Storage
       if (selectedFile) {
         imageUrl = await uploadImage(selectedFile);
-      } else if (imageUrl && !imageUrl.startsWith('data:') && !imageUrl.startsWith('/')) {
+      } else if (imageUrl && !imageUrl.startsWith('data:') && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
         // Nếu là tên file từ /public, thêm / vào đầu
         imageUrl = '/' + imageUrl;
       }

@@ -2,10 +2,21 @@ import React from 'react';
 import './ProductCard.css';
 
 function ProductCard({ product }) {
+  // Xử lý URL ảnh với BASE_URL
+  const getImageUrl = (image) => {
+    if (!image) return '';
+    if (image.startsWith('data:') || image.startsWith('http')) {
+      return image; // Base64 hoặc URL đầy đủ
+    }
+    // Đường dẫn tương đối từ /public
+    const baseUrl = import.meta.env.BASE_URL;
+    return image.startsWith('/') ? baseUrl + image.slice(1) : baseUrl + image;
+  };
+
   return (
     <div className="product-card">
       <div className="card-image-box">
-        <img src={product.image} alt={product.name} />
+        <img src={getImageUrl(product.image)} alt={product.name} />
         <span className="product-tag">{product.tag}</span>
       </div>
       <div className="card-info">

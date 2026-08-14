@@ -1,12 +1,21 @@
+/* Container chính */
 .admin-container {
   max-width: 900px;
   margin: 30px auto;
   padding: 20px;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
+.admin-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ff5277;
+  font-size: 1.6rem;
+}
+
+/* Form Thêm / Sửa */
 .admin-form {
   background: #fff5f7;
   padding: 20px;
@@ -15,8 +24,18 @@
   margin-bottom: 30px;
 }
 
+.admin-form h3 {
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
 .form-group {
-  margin-bottom: 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -34,6 +53,7 @@
   border-radius: 8px;
   outline: none;
   font-size: 0.95rem;
+  transition: border-color 0.2s;
 }
 
 .form-group input:focus {
@@ -54,6 +74,11 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-save:hover {
+  opacity: 0.9;
 }
 
 .btn-cancel {
@@ -65,22 +90,50 @@
   cursor: pointer;
 }
 
-/* Table danh sách */
+/* Bảng danh sách Responsive */
+.admin-list {
+  background: #fff;
+}
+
+.admin-list h3 {
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .admin-list table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  min-width: 500px;
 }
 
-.admin-list th, .admin-list td {
+.admin-list th,
+.admin-list td {
   padding: 12px;
   border-bottom: 1px solid #eee;
   text-align: left;
+  vertical-align: middle;
 }
 
 .admin-list th {
-  background: #fafafa;
-  color: #555;
+  background: #fff0f3;
+  color: #ff5277;
+  font-weight: 600;
+}
+
+.product-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.product-name {
+  font-weight: 600;
 }
 
 .badge-tag {
@@ -90,6 +143,13 @@
   border-radius: 12px;
   font-size: 0.8rem;
   font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 6px;
 }
 
 .btn-edit {
@@ -97,7 +157,6 @@
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
-  margin-right: 6px;
   cursor: pointer;
   color: #333;
   font-weight: 600;
@@ -111,4 +170,50 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
+}
+
+/* Vùng Kéo & Thả Ảnh */
+.drop-zone {
+  border: 2px dashed #ff5277;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 12px;
+}
+
+.drop-zone.dragging {
+  background: #ffe8ee;
+  border-color: #e03158;
+  transform: scale(1.01);
+}
+
+.drop-zone p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.drop-zone span {
+  color: #ff5277;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* Review ảnh nhỏ trong Form */
+.image-preview-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.preview-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
 }

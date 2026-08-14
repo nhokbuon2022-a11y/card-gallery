@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { supabase } from './supabaseClient';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Features from './components/Features';
@@ -8,28 +9,32 @@ import Footer from './components/Footer';
 import Admin from './pages/Admin';
 import './App.css';
 
-const DEFAULT_PRODUCTS = [
-  { id: 1, name: 'Thiệp Sinh Nhật Bé Kem', image: '/bekem.jpg', tag: 'Chibi Bé Gái', price: '5.000đ' },
-  { id: 2, name: 'Thiệp Sinh Nhật Duy Khánh', image: '/duykhan.jpg', tag: 'Chibi Bé Trai', price: '5.000đ' },
-  { id: 3, name: 'Thiệp Sinh Nhật Gia Hân', image: '/giahan.jpg', tag: 'Chibi Bông Hồng', price: '5.000đ' },
-  { id: 4, name: 'Bao Thư Liền Khối Cao Cấp', image: '/background.jpg', tag: 'Hot Trend', price: '5.000đ' },
-  { id: 5, name: 'Mẫu Thiệp Mời Xinh', image: '/anh.png', tag: 'Mẫu Mới', price: '5.000đ' },
-  { id: 6, name: 'Mẫu Thiệp Mời Thiết Kế', image: '/anh1.png', tag: 'Yêu Thích', price: '5.000đ' },
-];
-
 function App() {
   const [activeTab, setActiveTab] = useState('home');
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Khởi tạo state từ localStorage nếu có, nếu chưa có thì lấy mặc định
-  const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem('my_products');
-    return saved ? JSON.parse(saved) : DEFAULT_PRODUCTS;
-  });
+  // Hàm lấy danh sách sản phẩm từ Supabase
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('id', { ascending: false });
 
-  // Mỗi khi products thay đổi, lưu lại vào localStorage
+      if (error) throw error;
+      if (data) setProducts(data);
+    } catch (error) {
+      console.error('Lỗi khi tải sản phẩm:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem('my_products', JSON.stringify(products));
-  }, [products]);
+    fetchProducts();
+  }, []);
 
   return (
     <Router>
@@ -56,11 +61,15 @@ function App() {
                         <p>Những mẫu thiệp sinh nhật mới nhất và được yêu thích nhất</p>
                       </div>
 
-                      <div className="products-grid">
-                        {products.map((item) => (
-                          <ProductCard key={item.id} product={item} />
-                        ))}
-                      </div>
+                      {loading ? (
+                        <p style={{ textAlign: 'center' }}>Đang tải sản phẩm...</p>
+                      ) : (
+                        <div className="products-grid">
+                          {products.map((item) => (
+                            <ProductCard key={item.id} product={item} />
+                          ))}
+                        </div>
+                      )}
                     </section>
                   </main>
                 )}
@@ -70,7 +79,7 @@ function App() {
 
           <Route
             path="/admin"
-            element={<Admin products={products} setProducts={setProducts} />}
+            element={<Admin products={products} refreshProducts={fetchProducts} />}
           />
         </Routes>
 

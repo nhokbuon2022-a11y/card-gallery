@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { supabase } from '../supabaseClient';
+import './Admin.css';
 
-export default function Admin({ products, setProducts }) {
+export default function Admin({ products, refreshProducts }) {
   const [formData, setFormData] = useState({
     id: null,
     name: '',
@@ -8,103 +10,217 @@ export default function Admin({ products, setProducts }) {
     tag: '',
     price: ''
   });
+  const [selectedFile, setSelectedFile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSaveProduct = (e) => {
+  const handleProcessFile = (file) => {
+    if (file && file.type.startsWith('image/')) {
+      setSelectedFile(file);
+      setFormData((prev) => ({ ...prev, image: URL.createObjectURL(file) }));
+    } else {
+      alert('Vui lòng chọn file hình ảnh!');
+    }
+  };
+
+  const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
+  const handleDragLeave = (e) => { e.preventDefault(); setIsDragging(false); };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files?.length) handleProcessFile(e.dataTransfer.files[0]);
+  };
+
+const uploadImage = async (file) => {
+  try {
+    // Kiểm tra file type
+    if (!file.type.startsWith('image/')) {
+      throw new Error('Chỉ chấp nhận file hình ảnh');
+    }
+
+    // Convert file to base64 để lưu trực tiếp vào database
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  } catch (error) {
+    console.error('Lỗi xử lý ảnh:', error);
+    throw error;
+  }
+};
+
+  // Lưu hoặc Cập nhật Sản phẩm
+  const handleSaveProduct = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.price) {
       alert('Vui lòng điền tên và giá sản phẩm!');
       return;
     }
 
-    if (isEditing) {
-      setProducts(products.map(p => p.id === formData.id ? formData : p));
-      setIsEditing(false);
-    } else {
-      const newProduct = {
-        ...formData,
-        id: Date.now(),
-        image: formData.image || '/anh.png'
-      };
-      setProducts([...products, newProduct]);
-    }
+    try {
+      setUploading(true);
+      let imageUrl = formData.image;
 
-    setFormData({ id: null, name: '', image: '', tag: '', price: '' });
+      // Nếu có chọn file ảnh mới từ máy, tiến hành upload lên Supabase Storage
+      if (selectedFile) {
+        imageUrl = await uploadImage(selectedFile);
+      }
+
+      if (isEditing) {
+        // Cập nhật database
+        const { error } = await supabase
+          .from('products')
+          .update({
+            name: formData.name,
+            price: formData.price,
+            tag: formData.tag,
+            image: imageUrl
+          })
+          .eq('id', formData.id);
+
+        if (error) throw error;
+      } else {
+        // Thêm mới vào database
+        const { error } = await supabase.from('products').insert([
+          {
+            name: formData.name,
+            price: formData.price,
+            tag: formData.tag,
+            image: imageUrl || '/anh.png'
+          }
+        ]);
+
+        if (error) throw error;
+      }
+
+      alert(isEditing ? 'Cập nhật thành công!' : 'Thêm sản phẩm thành công!');
+      handleCancelEdit();
+      refreshProducts(); // Tải lại danh sách mới nhất
+    } catch (error) {
+      alert('Có lỗi xảy ra: ' + error.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleEditProduct = (product) => {
     setFormData(product);
+    setSelectedFile(null);
     setIsEditing(true);
   };
 
-  const handleDeleteProduct = (id) => {
+  const handleDeleteProduct = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-      setProducts(products.filter(p => p.id !== id));
+      try {
+        const { error } = await supabase.from('products').delete().eq('id', id);
+        if (error) throw error;
+        refreshProducts();
+      } catch (error) {
+        alert('Không thể xóa: ' + error.message);
+      }
     }
   };
 
   const handleCancelEdit = () => {
     setIsEditing(false);
+    setSelectedFile(null);
     setFormData({ id: null, name: '', image: '', tag: '', price: '' });
   };
 
   return (
     <main className="page-content fade-in">
-      <section className="admin-section" style={{ maxWidth: '900px', margin: '30px auto', padding: '20px' }}>
-        <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '20px', color: '#ff5277' }}>
-          Trang Quản Lý Sản Phẩm (Admin)
-        </h2>
+      <section className="admin-container">
+        <h2 className="admin-title">Trang Quản Lý Sản Phẩm (Admin - Supabase)</h2>
 
         {/* Form Thêm/Sửa */}
-        <form onSubmit={handleSaveProduct} style={{ background: '#fff5f7', padding: '20px', borderRadius: '16px', marginBottom: '30px', border: '1px solid #ffe1e8' }}>
+        <form onSubmit={handleSaveProduct} className="admin-form">
           <h3>{isEditing ? '✏️ Sửa Sản Phẩm' : '➕ Thêm Sản Phẩm Mới'}</h3>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '12px' }}>
+
+          {/* VÙNG KÉO THẢ ẢNH */}
+          <div
+            className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => document.getElementById('fileInput').click()}
+          >
+            <p>📁 Kéo & thả ảnh vào đây hoặc <span>bấm để chọn từ máy tính</span></p>
             <input
-              type="text"
-              name="name"
-              placeholder="Tên sản phẩm"
-              value={formData.name}
-              onChange={handleInputChange}
-              style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-            />
-            <input
-              type="text"
-              name="price"
-              placeholder="Giá (VD: 5.000đ)"
-              value={formData.price}
-              onChange={handleInputChange}
-              style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-            />
-            <input
-              type="text"
-              name="tag"
-              placeholder="Nhãn (VD: Hot Trend, Chibi Bé Gái)"
-              value={formData.tag}
-              onChange={handleInputChange}
-              style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-            />
-            <input
-              type="text"
-              name="image"
-              placeholder="Đường dẫn ảnh (VD: /bekem.jpg)"
-              value={formData.image}
-              onChange={handleInputChange}
-              style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+              type="file"
+              id="fileInput"
+              accept="image/*"
+              onChange={(e) => e.target.files?.[0] && handleProcessFile(e.target.files[0])}
+              style={{ display: 'none' }}
             />
           </div>
 
-          <div style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
-            <button type="submit" style={{ background: '#ff5277', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
-              {isEditing ? 'Lưu Cập Nhật' : 'Thêm Sản Phẩm'}
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Tên sản phẩm</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Tên sản phẩm"
+                value={formData.name}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Giá</label>
+              <input
+                type="text"
+                name="price"
+                placeholder="VD: 5.000đ"
+                value={formData.price}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Nhãn (Tag)</label>
+              <input
+                type="text"
+                name="tag"
+                placeholder="VD: Hot Trend, Chibi Bé Gái"
+                value={formData.tag}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Đường dẫn ảnh (hoặc URL)</label>
+              <input
+                type="text"
+                name="image"
+                placeholder="URL ảnh (nếu không chọn file)"
+                value={formData.image}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          {formData.image && (
+            <div className="image-preview-container" style={{ marginTop: '12px' }}>
+              <span style={{ fontSize: '0.85rem', color: '#666' }}>Ảnh xem trước:</span>
+              <img src={formData.image} alt="Preview" className="preview-img" style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }} />
+            </div>
+          )}
+
+          <div className="form-actions" style={{ marginTop: '16px' }}>
+            <button type="submit" className="btn-save" disabled={uploading}>
+              {uploading ? 'Đang lưu...' : isEditing ? 'Lưu Cập Nhật' : 'Thêm Sản Phẩm'}
             </button>
             {isEditing && (
-              <button type="button" onClick={handleCancelEdit} style={{ background: '#888', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>
+              <button type="button" onClick={handleCancelEdit} className="btn-cancel">
                 Hủy
               </button>
             )}
@@ -112,43 +228,45 @@ export default function Admin({ products, setProducts }) {
         </form>
 
         {/* Bảng Danh Sách */}
-        <div style={{ background: '#fff', padding: '20px', borderRadius: '16px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+        <div className="admin-list">
           <h3>📋 Danh Sách Hiện Tại ({products.length})</h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '12px' }}>
-            <thead>
-              <tr style={{ background: '#fff0f3', textAlign: 'left' }}>
-                <th style={{ padding: '10px' }}>Ảnh</th>
-                <th style={{ padding: '10px' }}>Tên</th>
-                <th style={{ padding: '10px' }}>Tag</th>
-                <th style={{ padding: '10px' }}>Giá</th>
-                <th style={{ padding: '10px' }}>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map(item => (
-                <tr key={item.id} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '10px' }}>
-                    <img src={item.image} alt={item.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '6px' }} />
-                  </td>
-                  <td style={{ padding: '10px', fontWeight: 'bold' }}>{item.name}</td>
-                  <td style={{ padding: '10px' }}>
-                    <span style={{ background: '#ffe8ee', color: '#ff5277', padding: '4px 8px', borderRadius: '12px', fontSize: '0.8rem' }}>
-                      {item.tag}
-                    </span>
-                  </td>
-                  <td style={{ padding: '10px' }}>{item.price}</td>
-                  <td style={{ padding: '10px' }}>
-                    <button onClick={() => handleEditProduct(item)} style={{ background: '#ffc107', border: 'none', padding: '6px 12px', borderRadius: '6px', marginRight: '6px', cursor: 'pointer' }}>
-                      Sửa
-                    </button>
-                    <button onClick={() => handleDeleteProduct(item.id)} style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>
-                      Xóa
-                    </button>
-                  </td>
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ảnh</th>
+                  <th>Tên</th>
+                  <th>Tag</th>
+                  <th>Giá</th>
+                  <th>Thao tác</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {products.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <img src={item.image} alt={item.name} className="product-img" />
+                    </td>
+                    <td className="product-name">{item.name}</td>
+                    <td>
+                      <span className="badge-tag">{item.tag}</span>
+                    </td>
+                    <td>{item.price}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button onClick={() => handleEditProduct(item)} className="btn-edit">
+                          Sửa
+                        </button>
+                        <button onClick={() => handleDeleteProduct(item.id)} className="btn-delete">
+                          Xóa
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
     </main>

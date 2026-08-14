@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import ProductCard from './components/ProductCard';
+import ProductModal from './components/ProductModal';
 import Footer from './components/Footer';
 import Admin from './pages/Admin';
 import './App.css';
@@ -13,6 +14,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   // Hàm lấy danh sách sản phẩm từ Supabase
   const fetchProducts = async () => {
@@ -66,7 +68,11 @@ function App() {
                       ) : (
                         <div className="products-grid">
                           {products.map((item) => (
-                            <ProductCard key={item.id} product={item} />
+                            <ProductCard 
+                              key={item.id} 
+                              product={item}
+                              onImageClick={setSelectedProduct}
+                            />
                           ))}
                         </div>
                       )}
@@ -82,6 +88,13 @@ function App() {
             element={<Admin products={products} refreshProducts={fetchProducts} />}
           />
         </Routes>
+
+        {selectedProduct && (
+          <ProductModal 
+            product={selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+          />
+        )}
 
         <Footer />
       </div>

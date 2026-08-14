@@ -1,7 +1,7 @@
 import React from 'react';
 import './ProductCard.css';
 
-function ProductCard({ product }) {
+function ProductCard({ product, onImageClick }) {
   // Xử lý URL ảnh với BASE_URL
   const getImageUrl = (image) => {
     if (!image) return '';
@@ -15,7 +15,7 @@ function ProductCard({ product }) {
 
   return (
     <div className="product-card">
-      <div className="card-image-box">
+      <div className="card-image-box" onClick={() => onImageClick(product)} style={{ cursor: 'pointer' }}>
         <img src={getImageUrl(product.image)} alt={product.name} />
         <span className="product-tag">{product.tag}</span>
       </div>

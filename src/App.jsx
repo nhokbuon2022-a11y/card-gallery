@@ -16,6 +16,31 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // Dữ liệu mẫu mặc định
+  const FALLBACK_PRODUCTS = [
+    {
+      id: 1,
+      name: 'Thiệp QTTN - bé trai ( Ngựa bấm mắc cáo )',
+      price: '4.900₫',
+      tag: 'Hot',
+      image: '/anh.png'
+    },
+    {
+      id: 2,
+      name: 'Thiệp QTTN - Nơ mắc cáo',
+      price: '4.900₫',
+      tag: 'Hot',
+      image: '/anh1.png'
+    },
+    {
+      id: 3,
+      name: 'Thiệp TGR -',
+      price: '2.800₫',
+      tag: 'Best Seller',
+      image: '/giahan.jpg'
+    }
+  ];
+
   // Hàm lấy danh sách sản phẩm từ Supabase
   const fetchProducts = async () => {
     try {
@@ -26,9 +51,16 @@ function App() {
         .order('id', { ascending: false });
 
       if (error) throw error;
-      if (data) setProducts(data);
+      if (data && data.length > 0) {
+        setProducts(data);
+      } else {
+        // Nếu database trống, dùng fallback data
+        setProducts(FALLBACK_PRODUCTS);
+      }
     } catch (error) {
       console.error('Lỗi khi tải sản phẩm:', error.message);
+      // Nếu lỗi, dùng fallback data
+      setProducts(FALLBACK_PRODUCTS);
     } finally {
       setLoading(false);
     }

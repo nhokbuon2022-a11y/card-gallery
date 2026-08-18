@@ -22,7 +22,7 @@ function Navbar({ activeTab, setActiveTab }) {
           Sản Phẩm
         </button>
       </nav>
-      <a href="https://zalo.me" target="_blank" rel="noreferrer" className="btn-primary">
+      <a href="https://zalo.me/0962835941" target="_blank" rel="noreferrer" className="btn-primary">
         Liên Hệ Zalo
       </a>
     </header>

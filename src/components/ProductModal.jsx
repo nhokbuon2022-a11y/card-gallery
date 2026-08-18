@@ -29,7 +29,7 @@ function ProductModal({ product, onClose }) {
             <p className="modal-price">Giá: <strong>{product.price}</strong></p>
             
             <a 
-              href="https://zalo.me" 
+              href="https://zalo.me/0962835941" 
               target="_blank" 
               rel="noreferrer" 
               className="btn-modal"
